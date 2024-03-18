@@ -1,4 +1,4 @@
-# Open source secure communication system
+# Open-source crypto-secure fully-decentralized quantum-wave-pattern-based peer-to-peer communication system.
 
 ```
 -----BEGIN ENCRYPTED PRIVATE KEY-----
