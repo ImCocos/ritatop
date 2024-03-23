@@ -1,4 +1,5 @@
 import uuid
+import base64
 
 from osscs import mode
 from osscs import models
@@ -19,29 +20,29 @@ class Message:
     def sign(self, cryptor: Cryptor) -> None:
         self.signature = cryptor.get_signature()
     
-    def dict(self) -> dict[str, bytes | dict[str, bytes]]:
-        self.dict_data: dict[str, bytes | dict[str, bytes]]
+    def dict(self) -> dict[str, str | dict[str, str]]:
+        self.dict_data: dict[str, str | dict[str, str]]
         self.dict_data = {
-            'uuid': str(uuid.uuid1()).encode(),
-            'type': self.type.mode_name.encode()
+            'uuid': base64.b64encode(str(uuid.uuid1()).encode()).decode(),
+            'type': base64.b64encode(self.type.mode_name.encode()).decode()
         }
 
         if self.adresat:
             self.dict_data.update({
-                'text': self.adresat.encrypt(self.text),
-                'test_data': self.adresat.encrypt('test_data')
+                'text': base64.b64encode(self.adresat.encrypt(self.text)).decode(),
+                'test_data': base64.b64encode(self.adresat.encrypt('test_data')).decode()
             })
         else:
             self.dict_data.update({
-                'text': self.text.encode(),
-                'test_data': 'test_data'.encode()
+                'text': base64.b64encode(self.text.encode()).decode(),
+                'test_data': base64.b64encode('test_data'.encode()).decode()
             })
 
         if self.signature:
             self.dict_data['signature'] = {
-                    'signature': self.signature.signature,
-                    'signature_data': self.signature.signature_data,
-                    'public_key': self.signature.public_key
+                    'signature': base64.b64encode(self.signature.signature).decode(),
+                    'signature_data': base64.b64encode(self.signature.signature_data).decode(),
+                    'public_key': base64.b64encode(self.signature.public_key).decode()
             }
 
         return self.dict_data

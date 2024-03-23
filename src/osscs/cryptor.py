@@ -18,7 +18,7 @@ class Cryptor:
             format=serialization.PublicFormat.PKCS1,
         )
 
-    def load_public_key_from_file(self, file_path: str = '') -> rsa.RSAPublicKey | None:
+    def load_public_key_from_file(self, file_path: str) -> rsa.RSAPublicKey | None:
         try:
             with open(file_path, "rb") as public_key_file:
                 public_key = public_key_file.read()
@@ -26,7 +26,7 @@ class Cryptor:
         except (FileNotFoundError, ValueError):
             return None
     
-    def write_public_key_to_file(self, file_path: str = '') -> None:
+    def write_public_key_to_file(self, file_path: str) -> None:
         try:
             with open(file_path, "wb") as public_key_file:
                 public_key_file.write(
@@ -51,7 +51,7 @@ class Cryptor:
             encryption_algorithm=serialization.BestAvailableEncryption(self.password.encode())
         )
 
-    def load_private_key_from_file(self, file_path: str = '') -> rsa.RSAPrivateKey | None:
+    def load_private_key_from_file(self, file_path: str) -> rsa.RSAPrivateKey | None:
         try:
             with open(file_path, "rb") as private_key_file:
                 private_key = private_key_file.read()
@@ -59,7 +59,7 @@ class Cryptor:
         except (FileNotFoundError, ValueError):
             return None
     
-    def write_private_key_to_file(self, file_path: str = '') -> None:
+    def write_private_key_to_file(self, file_path: str) -> None:
         try:
             with open(file_path, "wb") as private_key_file:
                 private_key_file.write(
@@ -73,7 +73,7 @@ class Cryptor:
             return None
 
     def load_private_key(self, private_key: bytes) -> rsa.RSAPrivateKey:
-        key = serialization.load_pem_public_key(private_key, self.password.encode())
+        key = serialization.load_pem_private_key(private_key, self.password.encode())
         if not isinstance(key, rsa.RSAPrivateKey):
             raise ValueError('wrong key')
         return key
