@@ -1,9 +1,9 @@
 import uuid
 
 from osscs import mode
+from osscs import models
 from osscs.user import User
 from osscs.cryptor import Cryptor
-from osscs import models
 
 
 class Message:

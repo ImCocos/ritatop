@@ -1,12 +1,11 @@
-from typing import Self
-
-
 class BaseMode:
     mode_name: str
     def __str__(self) -> str:
         return f'Mode({self.mode_name})'
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, self.__class__):
+            raise NotImplemented
         return self.mode_name == other.mode_name
 
 class SystemMode(BaseMode):

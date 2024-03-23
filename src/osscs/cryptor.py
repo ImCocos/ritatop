@@ -2,8 +2,8 @@ from cryptography import exceptions
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import utils
+from cryptography.hazmat.primitives.asymmetric import padding
 
 from osscs import models
 
@@ -39,9 +39,10 @@ class Cryptor:
             return None
     
     def load_public_key(self, public_key: bytes) -> rsa.RSAPublicKey:
-        return serialization.load_pem_public_key(
-                public_key,
-            ) # type: ignore
+        key = serialization.load_pem_public_key(public_key)
+        if not isinstance(key, rsa.RSAPublicKey):
+            raise ValueError('wrong key')
+        return key
     
     def get_bytes_private_key(self) -> bytes:
         return self.private_key.private_bytes(
@@ -72,10 +73,10 @@ class Cryptor:
             return None
 
     def load_private_key(self, private_key: bytes) -> rsa.RSAPrivateKey:
-        return serialization.load_pem_private_key(
-                private_key,
-                self.password.encode()
-            ) # type: ignore
+        key = serialization.load_pem_public_key(private_key, self.password.encode())
+        if not isinstance(key, rsa.RSAPrivateKey):
+            raise ValueError('wrong key')
+        return key
 
     def __init__(
             self,
@@ -108,6 +109,11 @@ class Cryptor:
             label=None
         )
 
+        self.signature_padding = padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        )
+
     def decrypt(self, string: bytes) -> str:
         return self.private_key.decrypt(
             string,
@@ -121,11 +127,8 @@ class Cryptor:
 
         signature = self.private_key.sign(
             signature_data,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            utils.Prehashed(chosen_hash)
+            padding=self.signature_padding,
+            algorithm=utils.Prehashed(chosen_hash)
         )
 
         return models.Signature(
@@ -136,15 +139,15 @@ class Cryptor:
 
     def verify_signature(self, signature: models.Signature) -> bool:
         try:
-            serialization.load_pem_public_key(signature.public_key).verify( # type: ignore
+            public_key = self.load_public_key(signature.public_key)
+            if not isinstance(public_key, rsa.RSAPublicKey):
+                raise ValueError(f'Wrong key')
+            public_key.verify(
                 signature.signature,
                 signature.signature_data,
-                padding=padding.PSS( # type: ignore
-                    mgf=padding.MGF1(hashes.SHA256()),
-                    salt_length=padding.PSS.MAX_LENGTH
-                ),
-                algorithm=utils.Prehashed(hashes.SHA256()) # type: ignore
-            ) # type: ignore
+                padding=self.signature_padding,
+                algorithm=utils.Prehashed(hashes.SHA256())
+            )
             return True
         except exceptions.InvalidSignature:
             return False
