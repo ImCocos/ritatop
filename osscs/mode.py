@@ -4,7 +4,7 @@ from typing import Self
 class BaseMode:
     mode_name: str
     def __str__(self) -> str:
-        return f'Mode(mode_name={self.mode_name})'
+        return f'Mode({self.mode_name})'
 
     def __eq__(self, other: Self) -> bool:
         return self.mode_name == other.mode_name

@@ -5,10 +5,12 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import utils
 
+from osscs import models
+
 
 class Cryptor:
     def __str__(self) -> str:
-        return 'Cryptor(' + self.get_bytes_public_key().decode().split("\n")[-3][-10:] + ')'
+        return f'Cryptor({self.get_bytes_public_key().decode().splitlines()[-2][-10:]})'
 
     def get_bytes_public_key(self) -> bytes:
         return self.public_key.public_bytes(
@@ -17,7 +19,6 @@ class Cryptor:
         )
 
     def load_public_key_from_file(self, file_path: str = '') -> rsa.RSAPublicKey | None:
-        print(f'load_public_key_from_file')
         try:
             with open(file_path, "rb") as public_key_file:
                 public_key = public_key_file.read()
@@ -26,14 +27,16 @@ class Cryptor:
             return None
     
     def write_public_key_to_file(self, file_path: str = '') -> None:
-        print(f'write_public_key_to_file')
-        with open(file_path, "wb") as public_key_file:
-            public_key_file.write(
-                self.public_key.public_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PublicFormat.PKCS1,
+        try:
+            with open(file_path, "wb") as public_key_file:
+                public_key_file.write(
+                    self.public_key.public_bytes(
+                        encoding=serialization.Encoding.PEM,
+                        format=serialization.PublicFormat.PKCS1,
+                    )
                 )
-            )
+        except (FileNotFoundError, ValueError):
+            return None
     
     def load_public_key(self, public_key: bytes) -> rsa.RSAPublicKey:
         return serialization.load_pem_public_key(
@@ -48,7 +51,6 @@ class Cryptor:
         )
 
     def load_private_key_from_file(self, file_path: str = '') -> rsa.RSAPrivateKey | None:
-        print(f'load_private_key_from_file')
         try:
             with open(file_path, "rb") as private_key_file:
                 private_key = private_key_file.read()
@@ -57,16 +59,18 @@ class Cryptor:
             return None
     
     def write_private_key_to_file(self, file_path: str = '') -> None:
-        print(f'write_private_key_to_file')
-        with open(file_path, "wb") as private_key_file:
-            private_key_file.write(
-                self.private_key.private_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PrivateFormat.PKCS8,
-                    encryption_algorithm=serialization.BestAvailableEncryption(self.password.encode())
+        try:
+            with open(file_path, "wb") as private_key_file:
+                private_key_file.write(
+                    self.private_key.private_bytes(
+                        encoding=serialization.Encoding.PEM,
+                        format=serialization.PrivateFormat.PKCS8,
+                        encryption_algorithm=serialization.BestAvailableEncryption(self.password.encode())
+                    )
                 )
-            )
-    
+        except (FileNotFoundError, ValueError):
+            return None
+
     def load_private_key(self, private_key: bytes) -> rsa.RSAPrivateKey:
         return serialization.load_pem_private_key(
                 private_key,
@@ -76,8 +80,8 @@ class Cryptor:
     def __init__(
             self,
             password: str,
-            private_key_path: str = '',
-            public_key_path: str = ''
+            private_key_path: str,
+            public_key_path: str
     ) -> None:
         self.password = password
 
@@ -104,28 +108,19 @@ class Cryptor:
             label=None
         )
 
-        # print(self.get_bytes_private_keybytes)
-        # print(self.get_bytes_public_keybytes)
-    
-    def encrypt(self, string: str) -> bytes:
-        return self.public_key.encrypt(
-            string.encode(),
-            self.padding
-        )
-
     def decrypt(self, string: bytes) -> str:
         return self.private_key.decrypt(
             string,
             self.padding
         ).decode()
 
-    def get_sign_and_sign_data(self) -> tuple[bytes, bytes]:
+    def get_signature(self) -> models.Signature:
         chosen_hash = hashes.SHA256()
         hasher = hashes.Hash(chosen_hash)
-        digest = hasher.finalize()
+        signature_data = hasher.finalize()
 
-        sign = self.private_key.sign(
-            digest,
+        signature = self.private_key.sign(
+            signature_data,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH
@@ -133,13 +128,17 @@ class Cryptor:
             utils.Prehashed(chosen_hash)
         )
 
-        return sign, digest
+        return models.Signature(
+            self.get_bytes_public_key(),
+            signature,
+            signature_data
+        )
 
-    def sign_is_valid(self, sign: bytes, data: bytes, public_key: bytes) -> bool:
+    def verify_signature(self, signature: models.Signature) -> bool:
         try:
-            serialization.load_pem_public_key(public_key).verify( # type: ignore
-                sign,
-                data,
+            serialization.load_pem_public_key(signature.public_key).verify( # type: ignore
+                signature.signature,
+                signature.signature_data,
                 padding=padding.PSS( # type: ignore
                     mgf=padding.MGF1(hashes.SHA256()),
                     salt_length=padding.PSS.MAX_LENGTH

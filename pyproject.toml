@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "osscs"
+version = "0.1.0"
+description = "Open-source crypto-secure communication system"
+authors = ["ImCocos"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+cryptography = "^42.0.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

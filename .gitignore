@@ -37,5 +37,6 @@ media/
 
 .tmp
 .debug.py
+debug.py
 
 **.rsa**
