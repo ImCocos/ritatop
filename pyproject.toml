@@ -1,15 +1,21 @@
-[tool.poetry]
+[project]
 name = "osscs"
-version = "0.1.0"
+version = "0.0.1"
+authors = [
+  { name="ImCocos", email="nomail@gmail.com" },
+]
 description = "Open-source crypto-secure communication system"
-authors = ["ImCocos"]
 readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  'cryptography>=42.0.5'
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-cryptography = "^42.0.5"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.urls]
+Homepage = "https://github.com/imcocos/ritatop"
+Issues = "https://github.com/imcocos/ritatop/issues"

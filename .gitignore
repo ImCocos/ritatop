@@ -40,3 +40,5 @@ media/
 debug.py
 
 **.rsa**
+
+*.egg-info/
