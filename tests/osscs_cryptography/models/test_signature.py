@@ -1,6 +1,6 @@
 import unittest
 
-from osscs.models import Signature
+from osscs_cryptography.models import Signature
 
 
 class TestSignature(unittest.TestCase):

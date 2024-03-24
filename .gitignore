@@ -35,9 +35,9 @@ media/
 .trash
 *.trash
 
-.tmp
+**.tmp**
 .debug.py
-debug.py
+**debug.py
 
 **.rsa**
 

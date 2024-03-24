@@ -1,10 +1,10 @@
 import uuid
 import base64
 
-from osscs import mode
-from osscs import models
-from osscs.user import User
-from osscs.cryptor import Cryptor
+from . import mode
+from . import models
+from .user import User
+from .cryptor import Cryptor
 
 
 class Message:
