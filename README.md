@@ -32,9 +32,7 @@ This is a small project about p2p connections, sockets, crypthography.
 ## Installing
 
 ```bash
-pip install --index-url https://test.pypi.org/simple/ \
-      --extra-index-url https://pypi.org/simple/ \
-      osscs
+pip install osscs
 python -m configure
 ```
 
