@@ -5,6 +5,7 @@ os.system("""
 mkdir ~/.config/osscs;
 mkdir ~/.config/osscs/data;
 mkdir ~/.config/osscs/data/rsa;
+mkdir ~/.config/osscs/data/rsa/known_keys;
 touch ~/.config/osscs/data/ips.txt
 echo '
 {

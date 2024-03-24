@@ -51,3 +51,16 @@ class KeyLoader:
         if not isinstance(key, rsa.RSAPrivateKey):
             raise ValueError(f'Wrong key type: {key.__class__.__name__}')
         return key
+
+    def get_bytes_public_key(self, public_key: rsa.RSAPublicKey) -> bytes:
+        return public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.PKCS1,
+        )
+    
+    def get_bytes_private_key(self, private_key: rsa.RSAPrivateKey, password: str) -> bytes:
+        return private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.BestAvailableEncryption(password.encode())
+        )

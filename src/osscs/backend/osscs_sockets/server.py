@@ -3,6 +3,8 @@ import socket
 import threading
 from typing import Any, Callable, Self
 
+from ...config import Config
+
 
 class Server:
     def __init__(self, ip, port, max_connections_count: int = 10) -> None:
@@ -12,7 +14,6 @@ class Server:
         self.max_connections_count = max_connections_count
 
         self.sock = socket.socket()
-        # self.sock.settimeout(3)
 
         self.connections: list[socket.socket] = []
     
@@ -36,14 +37,21 @@ class Server:
         self.sock.bind((self.ip, self.port))
         self.sock.listen(self.max_connections_count)
     
-    def listen(self) -> None:
+    def listen(self, config: Config) -> None:
         self.bind()
         try:
             while (len(self.connections) < self.max_connections_count):
                 connection, (connection_host, connection_port) = self.sock.accept()
+                with open(config.known_ips_file_path, 'r') as ips_file:
+                    ips = ips_file.read().splitlines()
+                if f'{connection_host}:12012' not in ips:
+                    with open(config.known_ips_file_path, 'a') as ips_file:
+                        ips_file.write(f'{connection_host}:12012\n')
+
                 threading.Thread(target=self.on_connect, args=[self, connection]).start()
                 self.connections.append(connection)
-        except BaseException:
+        except BaseException as e:
+            print(e)
             self.sock.close()
     
     def resend(self, msg: dict[str, Any], ip, port) -> None:

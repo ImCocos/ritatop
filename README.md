@@ -41,6 +41,6 @@ python -m configure
 ### Running
 
  - Fill the ~/.config/osscs/config.json
- - add few ips to ~/.config/osscs/data/ips.txt(example: 127.0.0.1:12012)
- - `python -m osscs_backend.server`
- - `python -m osscs_backend.client`
+ - add few ips to ~/.config/osscs/data/ips.txt(example: 1.1.1.1:12012)
+ - `python -m osscs.backend.server` (to recieve messages)
+ - `python -m osscs.backend.client` (to send messages)

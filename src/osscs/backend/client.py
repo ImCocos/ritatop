@@ -1,13 +1,11 @@
 import os
-import socket
-import sys
 
-from .config import Config
+from ..config import Config
 from .osscs_sockets import Client
-from osscs_cryptography.user import User
-from osscs_cryptography.cryptor import Cryptor
-from osscs_cryptography.message import Message
-from osscs_cryptography.key_loader import KeyLoader
+from ..cryptography.user import User
+from ..cryptography.cryptor import Cryptor
+from ..cryptography.message import Message
+from ..cryptography.key_loader import KeyLoader
 
 
 config = Config()
@@ -23,6 +21,7 @@ with open(config.known_ips_file_path, 'r') as file:
     known_ips = [
         (address.split(':')[0], int(address.split(':')[1]))
         for address in file.read().splitlines()
+        if address
     ]
 
 def main() -> None:
@@ -58,4 +57,5 @@ if __name__ == '__main__':
     try:
         main()
     except BaseException as e:
+        print(e)
         ...

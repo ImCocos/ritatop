@@ -1,9 +1,12 @@
+import os
+
+from ..cryptography.user import User
+from ..cryptography.cryptor import Cryptor
+from ..cryptography.key_loader import KeyLoader
+from ..cryptography.models.message import Message
+from ..cryptography.hash_utils import KeyHasherSHA1
+from ..config import Config
 from .osscs_sockets import Server
-from osscs_cryptography.key_loader import KeyLoader
-from osscs_cryptography.user import User
-from osscs_cryptography.cryptor import Cryptor
-from osscs_cryptography.models.message import Message
-from .config import Config
 
 
 config = Config()
@@ -31,12 +34,14 @@ with open(config.known_ips_file_path, 'r') as file:
     known_ips = [
         (address.split(':')[0], int(address.split(':')[1]))
         for address in file.read().splitlines()
+        if address
     ]
 
 print(known_ips)
 
 @server.on_msg_recieve
 def on_connect(dict_msg: dict) -> None:
+    key_hasher = KeyHasherSHA1()
     message = Message(dict_msg)
     
     for ip, port in known_ips:
@@ -44,6 +49,16 @@ def on_connect(dict_msg: dict) -> None:
 
     if message.signature:
         user = User(message.signature.public_key)
+        key_hash = key_hasher.string_hash_public_key(message.signature.public_key)
+        key_path = os.path.join(
+            config.known_keys,
+            key_hash
+        )
+        if not os.path.exists(key_path):
+            kloader.write_public_key_to_file(
+                key_path,
+                message.signature.public_key
+            )
     else:
         user = 'Unknown'
         
@@ -59,11 +74,12 @@ def on_connect(dict_msg: dict) -> None:
 
 
 def main() -> None:
-    server.listen()
+    server.listen(config)
     
 
 if __name__ == '__main__':
     try:
         main()
-    except BaseException:
+    except BaseException as e:
+        print(e)
         ...

@@ -11,20 +11,8 @@ from . import key_loader
 
 class Cryptor:
     def __str__(self) -> str:
-        return f'Cryptor({self.get_bytes_public_key().decode().splitlines()[-2][-10:]})'
-
-    def get_bytes_public_key(self) -> bytes:
-        return self.public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.PKCS1,
-        )
-    
-    def get_bytes_private_key(self) -> bytes:
-        return self.private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.BestAvailableEncryption(self.password.encode())
-        )
+        kloader = key_loader.KeyLoader()
+        return f'Cryptor({kloader.get_bytes_public_key(self.public_key).decode().splitlines()[-2][-10:]})'
 
     def __init__(
             self,
@@ -68,8 +56,9 @@ class Cryptor:
             algorithm=utils.Prehashed(chosen_hash)
         )
 
+        kloader = key_loader.KeyLoader()
         return models.Signature(
-            self.get_bytes_public_key(),
+            kloader.get_bytes_public_key(self.public_key),
             signature,
             signature_data
         )
