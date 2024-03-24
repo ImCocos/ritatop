@@ -10,8 +10,14 @@ class Client:
     def send(self, msg: dict[str, Any]) -> None:
         self.sock.send(json.dumps(msg).encode())
     
-    def connect(self, ip, port) -> None:
-        self.sock.connect((ip, port))
+    def resend(self, msg: dict[str, Any], ip, port) -> None:
+        if self.connect(ip, port):
+            self.send(msg)
+            self.close()
+            self.sock = socket.socket()
+    
+    def connect(self, ip, port) -> bool:
+        return self.sock.connect_ex((ip, port)) == 0
     
     def close(self) -> None:
         self.sock.close()

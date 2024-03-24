@@ -28,3 +28,18 @@ This is a small project about p2p connections, sockets, crypthography.
  - peer to peer connections
  - rsa keys
  - 1 to all messaging
+
+## Installing
+
+```bash
+pip install --index-url https://test.pypi.org/simple/ \
+      --extra-index-url https://pypi.org/simple/ \
+      osscs
+python -m configure
+```
+
+### Running
+
+ - Fill the ~/.config/osscs/config.json
+ - add few ips to ~/.config/osscs/data/ips.txt(example: 127.0.0.1:12012)
+ - start server

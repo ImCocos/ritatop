@@ -1,4 +1,5 @@
 import os
+import socket
 import sys
 
 from .config import Config
@@ -18,9 +19,13 @@ cryptor = Cryptor(
 )
 client = Client()
 
+with open(config.known_ips_file_path, 'r') as file:
+    known_ips = [
+        (address.split(':')[0], int(address.split(':')[1]))
+        for address in file.read().splitlines()
+    ]
 
 def main() -> None:
-    client.connect(sys.argv[1], int(sys.argv[2]))
     while True:
         users = []
         msg = input('Type your message(<=190s): ')
@@ -45,11 +50,12 @@ def main() -> None:
         if sign:
             message.sign(cryptor)
         
-        client.send(message.dict())
+        for ip, port in known_ips:
+            client.resend(message.dict(), ip, port)
 
 
 if __name__ == '__main__':
     try:
         main()
-    except BaseException:
+    except BaseException as e:
         ...

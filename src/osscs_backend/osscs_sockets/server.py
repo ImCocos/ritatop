@@ -12,6 +12,7 @@ class Server:
         self.max_connections_count = max_connections_count
 
         self.sock = socket.socket()
+        # self.sock.settimeout(3)
 
         self.connections: list[socket.socket] = []
     
@@ -46,5 +47,5 @@ class Server:
             self.sock.close()
     
     def resend(self, msg: dict[str, Any], ip, port) -> None:
-        self.sock.connect((ip, port))
-        self.sock.send(json.dumps(msg).encode())
+        if self.sock.connect_ex((ip, port)) == 0:
+            self.sock.send(json.dumps(msg).encode())

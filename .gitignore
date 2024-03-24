@@ -42,3 +42,7 @@ media/
 **.rsa**
 
 *.egg-info/
+
+dist/
+
+.piprc

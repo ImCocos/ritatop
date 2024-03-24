@@ -39,9 +39,7 @@ print(known_ips)
 def on_connect(dict_msg: dict) -> None:
     message = Message(dict_msg)
     
-    print(f'Recieve {message}')
     for ip, port in known_ips:
-        print(f'Resending to {ip}:{port}')
         server.resend(dict_msg, ip, port)
 
     if message.signature:
