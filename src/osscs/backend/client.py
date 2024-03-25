@@ -1,7 +1,8 @@
 import os
 
 from ..config import Config
-from .sockets import Client
+# from .sockets import Client
+from .sockets import SocketSender
 from ..cryptography.user import User
 from ..cryptography.cryptor import Cryptor
 from ..cryptography.message import Message
@@ -15,7 +16,7 @@ cryptor = Cryptor(
     kloader.get_rsa_private_key_from_file(config.private_key_path, config.password),
     kloader.get_rsa_public_key_from_file(config.public_key_path)
 )
-client = Client()
+sender = SocketSender()
 
 with open(config.known_ips_file_path, 'r') as file:
     known_ips = [
@@ -24,7 +25,7 @@ with open(config.known_ips_file_path, 'r') as file:
         if address
     ]
 
-def main() -> None:
+def send() -> None:
     while True:
         users = []
         msg = input('Type your message(<=190s): ')
@@ -49,13 +50,19 @@ def main() -> None:
         if sign:
             message.sign(cryptor)
         
-        for ip, port in known_ips:
-            client.resend(message.dict(), ip, port)
+        sender.send(message.dict())
+
+
+def main() -> None:
+    for ip, port in known_ips:
+        sender.connect(ip, port)
+    print(*(s.getsockname() for s in sender.conections))
+
+    try:
+        send()
+    except KeyboardInterrupt:
+        print('\nQuiting...')
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except BaseException as e:
-        print(e)
-        ...
+    main()

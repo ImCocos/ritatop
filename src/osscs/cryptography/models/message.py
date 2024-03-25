@@ -21,5 +21,5 @@ class Message:
                 base64.b64decode(data['signature']['signature'].encode()),
                 base64.b64decode(data['signature']['signature_data'].encode())
             ) if data.get('signature') else None
-        except Exception:
+        except BaseException:
             raise InvalidMessage

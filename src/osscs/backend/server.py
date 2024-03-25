@@ -1,4 +1,6 @@
-import os
+import json
+from typing import Callable
+
 
 from ..cryptography.user import User
 from ..cryptography.cryptor import Cryptor
@@ -6,15 +8,14 @@ from ..cryptography.key_loader import KeyLoader
 from ..cryptography.models.message import Message
 from ..cryptography.hash_utils import KeyHasherSHA1
 from ..config import Config
-from .sockets import Server
+from .sockets import SocketListener, SocketSender
+from .sockets import SocketReader
 
 
 config = Config()
 kloader = KeyLoader()
-
 private_key = kloader.get_rsa_private_key_from_file(config.private_key_path, config.password)
 public_key = kloader.get_rsa_public_key_from_file(config.public_key_path)
-
 cryptor = Cryptor(
     config.password,
     private_key,
@@ -24,11 +25,7 @@ if not private_key:
     kloader.write_private_key_to_file(config.private_key_path, cryptor.private_key, config.password)
 if not public_key or not private_key:
     kloader.write_public_key_to_file(config.public_key_path, cryptor.public_key)
-
-server = Server(
-    config.ip,
-    config.port,
-)
+listener = SocketListener()
 
 with open(config.known_ips_file_path, 'r') as file:
     known_ips = [
@@ -37,49 +34,33 @@ with open(config.known_ips_file_path, 'r') as file:
         if address
     ]
 
-print(known_ips)
 
-@server.on_msg_recieve
-def on_connect(dict_msg: dict) -> None:
-    key_hasher = KeyHasherSHA1()
-    message = Message(dict_msg)
-    
-    for ip, port in known_ips:
-        server.resend(dict_msg, ip, port)
+def on_connect(sender: SocketSender) -> Callable[[SocketReader], None]:
+    def wrapper(socket_reader: SocketReader) -> None:
+        while True:
+            msg = socket_reader.poll()
+            if not msg:
+                break
+            sender.send(json.loads(msg))
+            message = Message(json.loads(msg))
+            print(f'{message.text}')
 
-    if message.signature:
-        user = User(message.signature.public_key)
-        key_hash = key_hasher.string_hash_public_key(message.signature.public_key)
-        key_path = os.path.join(
-            config.known_keys,
-            key_hash
-        )
-        if not os.path.exists(key_path):
-            kloader.write_public_key_to_file(
-                key_path,
-                message.signature.public_key
-            )
-    else:
-        user = 'Unknown'
-        
-    if message.type == 'public':
-        text = message.text.decode()
-        print(f'{user}[{message.type}]: {text}')
-    else:
+    def wrapper2(socket_reader: SocketReader) -> None:
         try:
-            text = cryptor.decrypt(message.text)
-            print(f'{user}[{message.type}]: {text}')
-        except ValueError:
-            ...
+            wrapper(socket_reader)
+        except KeyboardInterrupt:
+            print('\nExiting...')
+
+    return wrapper2
 
 
 def main() -> None:
-    server.listen(config)
-    
+    sender = SocketSender()
+    for ip, port in known_ips:
+        sender.connect(ip, port)
+    print(*(s.getsockname() for s in sender.conections))
+    listener.listen_on(config.ip, config.port, on_connect(sender))
+
 
 if __name__ == '__main__':
-    try:
-        main()
-    except BaseException as e:
-        print(e)
-        ...
+    main()
