@@ -33,7 +33,7 @@ This is a small project about p2p connections, sockets, crypthography.
 
 ```bash
 pip install osscs
-python -m configure
+python -m osscs.configure
 ```
 
 ### Running
