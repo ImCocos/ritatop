@@ -1,11 +1,10 @@
 import json
 import socket
 
-from .have_socket import HaveSocket
 from .address_validator import AddressValidator
 
 
-class SocketSender(HaveSocket):
+class SocketSender:
     def __init__(self) -> None:
         self.conections: list[socket.socket] = []
 

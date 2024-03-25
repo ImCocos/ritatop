@@ -1,15 +1,15 @@
 import json
 from typing import Callable
 
-
-from ..cryptography.user import User
-from ..cryptography.cryptor import Cryptor
-from ..cryptography.key_loader import KeyLoader
-from ..cryptography.models.message import Message
-from ..cryptography.hash_utils import KeyHasherSHA1
+from . import AddressStorage
+from . import KeyStorage
+from . import User
+from . import SocketReader
+from . import MessageFromDictMapper
+from . import SocketListener, SocketSender
 from ..config import Config
-from .sockets import SocketListener, SocketSender
-from .sockets import SocketReader
+from ..cryptography import Cryptor
+from ..cryptography import KeyLoader
 
 
 config = Config()
@@ -27,23 +27,38 @@ if not public_key or not private_key:
     kloader.write_public_key_to_file(config.public_key_path, cryptor.public_key)
 listener = SocketListener()
 
-with open(config.known_ips_file_path, 'r') as file:
-    known_ips = [
-        (address.split(':')[0], int(address.split(':')[1]))
-        for address in file.read().splitlines()
-        if address
-    ]
+address_storage = AddressStorage(config.known_ips_file_path)
+known_ips = address_storage.load_addresses()
+key_storage = KeyStorage(config.known_keys)
 
 
 def on_connect(sender: SocketSender) -> Callable[[SocketReader], None]:
     def wrapper(socket_reader: SocketReader) -> None:
         while True:
             msg = socket_reader.poll()
+
             if not msg:
                 break
+
             sender.send(json.loads(msg))
-            message = Message(json.loads(msg))
-            print(f'{message.text}')
+
+            message = MessageFromDictMapper(json.loads(msg))
+            
+            user: str = 'Unknown'
+            if message.signature:
+                if cryptor.verify_signature(message.signature):
+                    key_storage.try_add_key(message.signature.public_key)
+                    user = str(User(message.signature.public_key))
+            
+            if message.type == 'private':
+                try:
+                    text = cryptor.decrypt(message.text)
+                    print(f'{user}[{message.type}]: {text}')
+                except ValueError:
+                    ...
+            else:
+                print(f'{user}[{message.type}]: {message.text.decode()}')
+
 
     def wrapper2(socket_reader: SocketReader) -> None:
         try:

@@ -1,6 +1,5 @@
 from cryptography import exceptions
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import utils
 from cryptography.hazmat.primitives.asymmetric import padding

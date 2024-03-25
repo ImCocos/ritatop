@@ -1,7 +1,7 @@
 import base64
 import hashlib
 
-from ..cryptography.key_loader import KeyLoader, rsa
+from .key_loader import KeyLoader, rsa
 
 
 class KeyHasherSHA1:

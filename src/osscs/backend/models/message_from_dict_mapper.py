@@ -1,12 +1,12 @@
 import base64
 
-from .signature import Signature
+from ...cryptography import Signature
 
 
 class InvalidMessage(BaseException):
     ...
 
-class Message:
+class MessageFromDictMapper:
     def __str__(self) -> str:
         return f'Message({self.type})'
 

@@ -1,12 +1,13 @@
 import os
 
+from . import SocketSender
+from . import KeyStorage
+from . import User
+from . import Message
+from . import AddressStorage
 from ..config import Config
-# from .sockets import Client
-from .sockets import SocketSender
-from ..cryptography.user import User
-from ..cryptography.cryptor import Cryptor
-from ..cryptography.message import Message
-from ..cryptography.key_loader import KeyLoader
+from ..cryptography import Cryptor
+from ..cryptography import KeyLoader
 
 
 config = Config()
@@ -17,13 +18,9 @@ cryptor = Cryptor(
     kloader.get_rsa_public_key_from_file(config.public_key_path)
 )
 sender = SocketSender()
-
-with open(config.known_ips_file_path, 'r') as file:
-    known_ips = [
-        (address.split(':')[0], int(address.split(':')[1]))
-        for address in file.read().splitlines()
-        if address
-    ]
+address_storage = AddressStorage(config.known_ips_file_path)
+known_ips = address_storage.load_addresses()
+key_storage = KeyStorage(config.known_keys)
 
 def send() -> None:
     while True:
@@ -32,10 +29,9 @@ def send() -> None:
         sign = input('Sign message?[y/N]:').lower() not in ('n', 'no')
         if input('Type of message[private/public]: ') == 'private':
             print('\n' + '-'*os.get_terminal_size()[0] + '\n')
-            for idx, name in enumerate(os.listdir(config.known_keys)):
-                with open(os.path.join(config.known_keys, name), 'rb') as key_file:
-                    user = User(kloader.get_rsa_public_key(key_file.read()))
-                    users.append(user)
+            for idx, key in enumerate(key_storage.load_keys()):
+                user = User(key)
+                users.append(user)
                 print(f'{idx}) {user}')
                     
             print('\n' + '-'*os.get_terminal_size()[0] + '\n')

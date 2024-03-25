@@ -1,8 +1,9 @@
-from . import key_loader
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding
+
+from ...cryptography import KeyLoader
 
 
 class User:
@@ -22,7 +23,7 @@ class User:
         )
 
     def __init__(self, public_key: rsa.RSAPublicKey | bytes) -> None:
-        kloader = key_loader.KeyLoader()
+        kloader = KeyLoader()
         self.public_key = public_key if isinstance(public_key, rsa.RSAPublicKey) else kloader.get_rsa_public_key(public_key)
         self.padding = padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),

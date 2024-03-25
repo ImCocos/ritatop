@@ -2,9 +2,9 @@ import uuid
 import base64
 
 from . import mode
-from . import models
 from .user import User
-from .cryptor import Cryptor
+from ...cryptography import Cryptor
+from ...cryptography import Signature
 
 
 class Message:
@@ -15,7 +15,7 @@ class Message:
         self.text = text[:190]
         self.adresat = adresat
         self.type = mode.PrivateMode() if self.adresat else mode.PublicMode()
-        self.signature: None | models.Signature = None
+        self.signature: None | Signature = None
 
     def sign(self, cryptor: Cryptor) -> None:
         self.signature = cryptor.get_signature()
