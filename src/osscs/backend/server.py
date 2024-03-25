@@ -6,7 +6,7 @@ from ..cryptography.key_loader import KeyLoader
 from ..cryptography.models.message import Message
 from ..cryptography.hash_utils import KeyHasherSHA1
 from ..config import Config
-from .osscs_sockets import Server
+from .sockets import Server
 
 
 config = Config()

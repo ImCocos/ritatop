@@ -1,7 +1,7 @@
 import os
 
 from ..config import Config
-from .osscs_sockets import Client
+from .sockets import Client
 from ..cryptography.user import User
 from ..cryptography.cryptor import Cryptor
 from ..cryptography.message import Message
