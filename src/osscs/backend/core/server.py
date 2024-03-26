@@ -1,4 +1,5 @@
 import json
+import threading
 from typing import Callable
 
 from .. import storage
@@ -27,26 +28,27 @@ listener = sockets.SocketListener()
 address_storage = storage.AddressStorage(config.known_ips_file_path)
 known_ips = address_storage.load_addresses()
 key_storage = storage.KeyStorage(config.known_keys, kloader)
+uuid_storage = storage.UUIDStorage(1000)
 
 
-def on_connect(sender: sockets.SocketSender) -> Callable[[sockets.SocketReader], None]:
-    def wrapper(socket_reader: sockets.SocketReader) -> None:
-        while True:
-            for ip, port in known_ips:
-                sender.try_connect(ip, port)
-
+def on_connect(sender: sockets.SocketSender) -> Callable[[sockets.SocketReader, threading.Event], None]:
+    def wrapper(socket_reader: sockets.SocketReader, kill_threads: threading.Event) -> None:
+        while not kill_threads.is_set():
             msg = socket_reader.poll()
 
             if not msg:
                 break
             
+            message = models.MessageFromDictMapper(json.loads(msg))
+
+            if uuid_storage.have(message.uuid):
+                continue
+
+            uuid_storage.add(message.uuid)
             for ip, port in known_ips:
-                print(f'Sending msg to {ip}:{port}')
                 sender.send(ip, port, json.loads(msg))
 
-            message = models.MessageFromDictMapper(json.loads(msg))
-            
-            user: str = 'Unknown'
+            user: str = 'User(no pub key)'
             if message.signature:
                 if cryptor.verify_signature(message.signature):
                     key_storage.try_add_key(message.signature.public_key)
@@ -62,9 +64,9 @@ def on_connect(sender: sockets.SocketSender) -> Callable[[sockets.SocketReader],
                 print(f'{user}[{message.type}]: {message.text.decode()}')
 
 
-    def wrapper2(socket_reader: sockets.SocketReader) -> None:
+    def wrapper2(socket_reader: sockets.SocketReader, kill_threads: threading.Event) -> None:
         try:
-            wrapper(socket_reader)
+            wrapper(socket_reader, kill_threads)
         except KeyboardInterrupt:
             print('\nExiting...')
 

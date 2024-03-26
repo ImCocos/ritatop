@@ -8,7 +8,7 @@ class MessageFromDictMapper:
         return f'Message({self.type})'
 
     def __init__(self, data: dict) -> None:
-        self.uuid: bytes = base64.b64decode(data['uuid'].encode())
+        self.uuid: str = base64.b64decode(data['uuid'].encode()).decode()
         self.type: str = base64.b64decode(data['type'].encode()).decode()
         self.text: bytes = base64.b64decode(data['text'].encode())
         self.test_data: bytes = base64.b64decode(data['test_data'].encode())

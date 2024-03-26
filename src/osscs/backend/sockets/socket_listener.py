@@ -11,6 +11,7 @@ class SocketListener(HaveSocket):
     def __init__(self, max_connections: int = 10) -> None:
         self.max_connections = max_connections
         self.connections: dict[socket.socket, threading.Thread] = {}
+        self.kill_threads = threading.Event()
 
         self.create_socket()
 
@@ -21,9 +22,9 @@ class SocketListener(HaveSocket):
         self.socket.listen(self.max_connections)
     
     
-    def accept_connection(self, on_connection: Callable[[SocketReader], None]) -> None:
+    def accept_connection(self, on_connection: Callable[[SocketReader, threading.Event], None]) -> None:
         connection, (_, _) = self.socket.accept()
-        thread = threading.Thread(target=on_connection, args=(SocketReader(connection),))
+        thread = threading.Thread(target=on_connection, args=(SocketReader(connection), self.kill_threads))
         self.connections[connection] = thread
         thread.start()
     
@@ -39,7 +40,7 @@ class SocketListener(HaveSocket):
             del self.connections[connection]
             connection.close()
 
-    def listen_on(self, ip: str, port: int, on_connection: Callable[[SocketReader], None]) -> None:
+    def listen_on(self, ip: str, port: int, on_connection: Callable[[SocketReader, threading.Event], None]) -> None:
         self.bind(ip, port)
         
         try:        
@@ -50,6 +51,7 @@ class SocketListener(HaveSocket):
         except KeyboardInterrupt:
             print('\nClosing server...')
             self.kill_connections()
+            self.kill_threads.set()
             self.shutdown_socket()
             self.close_socket()
             print('Connections killed, socket closed')

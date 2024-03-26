@@ -22,8 +22,8 @@ def send() -> None:
     while True:
         users = []
         msg = input('Type your message(<=190s): ')
-        sign = input('Sign message?[y/N]:').lower() not in ('n', 'no')
-        if input('Type of message[private/public]: ') == 'private':
+        sign = input('Sign message?[y/N](y):').lower() not in ('n', 'no')
+        if input('Type of message[private/public](public): ') == 'private':
             for idx, key in enumerate(key_storage.load_keys()):
                 user = models.User(key, kloader)
                 users.append(user)
