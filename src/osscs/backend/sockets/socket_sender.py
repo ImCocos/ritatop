@@ -10,6 +10,7 @@ class SocketSender:
 
     def try_connect(self, ip: str, port: int) -> socket.socket | None:
         sock = socket.socket()
+        sock.settimeout(0.1)
         sig = sock.connect_ex((ip, port))
         if sig == 0:
             return sock
