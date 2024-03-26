@@ -6,18 +6,18 @@ from .address_validator import AddressValidator
 
 class SocketSender:
     def __init__(self) -> None:
-        self.conections: list[socket.socket] = []
+        ...
 
-    def connect(self, ip: str, port: int) -> bool:
-        validate_address = AddressValidator()
-        validate_address(ip, port)
+    def try_connect(self, ip: str, port: int) -> socket.socket | None:
         sock = socket.socket()
         sig = sock.connect_ex((ip, port))
         if sig == 0:
-            self.conections.append(sock)
-            return True
-        return False
+            return sock
 
-    def send(self, msg: dict[str, str | dict[str, str]]) -> None:
-        for sock in self.conections:
-            sock.send(json.dumps(msg).encode())
+    def send(self, ip: str, port: int, msg: dict[str, str | dict[str, str]]) -> None:
+        validate_address = AddressValidator()
+        validate_address(ip, port)        
+        conn = self.try_connect(ip, port)
+        if conn:
+            conn.send(json.dumps(msg).encode())
+            conn.close()

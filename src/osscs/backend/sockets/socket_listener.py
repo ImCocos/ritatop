@@ -41,11 +41,9 @@ class SocketListener(HaveSocket):
 
     def listen_on(self, ip: str, port: int, on_connection: Callable[[SocketReader], None]) -> None:
         self.bind(ip, port)
-        print(f'Listening on {ip}:{port}')
         
         try:        
             while True:
-                print(*(f'{s.getsockname()} - {self.connections[s].getName()}' for s in self.connections))
                 self.clean_dead_connectons()
                 if len(self.connections) < self.max_connections:
                     self.accept_connection(on_connection)

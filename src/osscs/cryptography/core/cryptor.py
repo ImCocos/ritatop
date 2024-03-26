@@ -4,21 +4,22 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import utils
 from cryptography.hazmat.primitives.asymmetric import padding
 
-from . import models
-from . import key_loader
+from .common import AbstarctRSAKeyLoader
+from .. import models
 
 
 class Cryptor:
     def __str__(self) -> str:
-        kloader = key_loader.KeyLoader()
-        return f'Cryptor({kloader.get_bytes_public_key(self.public_key).decode().splitlines()[-2][-10:]})'
+        return f'Cryptor({self.key_loader.get_bytes_public_key(self.public_key).decode().splitlines()[-2][-10:]})'
 
     def __init__(
             self,
             password: str,
+            key_loader: AbstarctRSAKeyLoader,
             private_key: None | rsa.RSAPrivateKey = None,
             public_key: None | rsa.RSAPublicKey = None
     ) -> None:
+        self.key_loader = key_loader
         self.password = password
 
         self.private_key = private_key if private_key else rsa.generate_private_key(
@@ -55,17 +56,15 @@ class Cryptor:
             algorithm=utils.Prehashed(chosen_hash)
         )
 
-        kloader = key_loader.KeyLoader()
         return models.Signature(
-            kloader.get_bytes_public_key(self.public_key),
+            self.key_loader.get_bytes_public_key(self.public_key),
             signature,
             signature_data
         )
 
     def verify_signature(self, signature: models.Signature) -> bool:
-        kloader = key_loader.KeyLoader()
         try:
-            public_key = kloader.get_rsa_public_key(signature.public_key)
+            public_key = self.key_loader.get_rsa_public_key(signature.public_key)
             if not isinstance(public_key, rsa.RSAPublicKey):
                 raise ValueError(f'Wrong key')
             public_key.verify(

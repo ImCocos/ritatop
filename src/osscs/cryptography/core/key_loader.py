@@ -1,8 +1,10 @@
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+from .common import AbstarctRSAKeyLoader
 
-class KeyLoader:
+
+class KeyLoader(AbstarctRSAKeyLoader):
     def get_rsa_public_key_from_file(self, file_path: str) -> rsa.RSAPublicKey | None:
         try:
             with open(file_path, "rb") as public_key_file:

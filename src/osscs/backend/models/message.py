@@ -1,10 +1,10 @@
 import uuid
 import base64
 
-from . import mode
+from .mode import PrivateMode, PublicMode
 from .user import User
-from ...cryptography import Cryptor
-from ...cryptography import Signature
+from ...cryptography import core
+from ...cryptography import models
 
 
 class Message:
@@ -14,10 +14,10 @@ class Message:
     def __init__(self, text: str, adresat: User | None = None) -> None:
         self.text = text[:190]
         self.adresat = adresat
-        self.type = mode.PrivateMode() if self.adresat else mode.PublicMode()
-        self.signature: None | Signature = None
+        self.type = PrivateMode() if self.adresat else PublicMode()
+        self.signature: None | models.Signature = None
 
-    def sign(self, cryptor: Cryptor) -> None:
+    def sign(self, cryptor: core.Cryptor) -> None:
         self.signature = cryptor.get_signature()
     
     def dict(self) -> dict[str, str | dict[str, str]]:

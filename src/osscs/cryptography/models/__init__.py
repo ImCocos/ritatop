@@ -1,1 +1,1 @@
-from .signature import Signature as Signature
+from .signature import Signature
