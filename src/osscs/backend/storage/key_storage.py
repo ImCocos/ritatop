@@ -3,7 +3,7 @@ import os
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 from .path_validator import PathValidator
-from ...cryptography import core
+from osscs.cryptography import core
 
 
 class KeyStorage:

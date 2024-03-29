@@ -1,4 +1,5 @@
 import socket
+from typing import Any
 
 
 class SocketReader:
@@ -7,10 +8,7 @@ class SocketReader:
         
     def poll(self) -> bytes | None:
         while True:
-            try:
-                msg = self.socket.recv(2048)
-            except (KeyboardInterrupt, OSError):
-                break
+            msg, _ = self.socket.recvfrom(4096)
             if len(msg) == 0:
                 break
             

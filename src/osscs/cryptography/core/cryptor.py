@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.asymmetric import utils
 from cryptography.hazmat.primitives.asymmetric import padding
 
 from .common import AbstarctRSAKeyLoader
-from .. import models
+from osscs.cryptography import models
 
 
 class Cryptor:

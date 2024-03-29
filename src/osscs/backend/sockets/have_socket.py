@@ -6,7 +6,7 @@ class HaveSocket:
 
     def create_socket(self) -> None:
         if not hasattr(self, 'socket'):
-            self.socket = sock.socket()
+            self.socket = sock.socket(sock.AF_INET, sock.SOCK_DGRAM)
         
     def shutdown_socket(self) -> None:
         if hasattr(self, 'socket'):

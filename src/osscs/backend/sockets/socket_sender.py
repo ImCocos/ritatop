@@ -1,24 +1,17 @@
 import json
-import socket
 
+from .have_socket import HaveSocket
 from .address_validator import AddressValidator
 
 
-class SocketSender:
+class SocketSender(HaveSocket):
     def __init__(self) -> None:
-        ...
-
-    def try_connect(self, ip: str, port: int) -> socket.socket | None:
-        sock = socket.socket()
-        sock.settimeout(0.1)
-        sig = sock.connect_ex((ip, port))
-        if sig == 0:
-            return sock
+        self.create_socket()
 
     def send(self, ip: str, port: int, msg: dict[str, str | dict[str, str]]) -> None:
         validate_address = AddressValidator()
         validate_address(ip, port)        
-        conn = self.try_connect(ip, port)
-        if conn:
-            conn.send(json.dumps(msg).encode())
-            conn.close()
+        self.socket.sendto(json.dumps(msg).encode(), (ip, port))
+
+    def close(self) -> None:
+        self.close_socket()

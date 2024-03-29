@@ -1,5 +1,5 @@
 from .path_validator import PathValidator
-from ..sockets import AddressValidator
+from osscs.backend.sockets import AddressValidator
 
 
 class AddressStorage:

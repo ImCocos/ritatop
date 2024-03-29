@@ -1,6 +1,6 @@
 import base64
 
-from ...cryptography import models
+from osscs.cryptography import models
 
 
 class MessageFromDictMapper:

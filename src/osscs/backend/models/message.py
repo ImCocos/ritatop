@@ -3,8 +3,8 @@ import base64
 
 from .mode import PrivateMode, PublicMode
 from .user import User
-from ...cryptography import core
-from ...cryptography import models
+from osscs.cryptography import core
+from osscs.cryptography import models
 
 
 class Message:
