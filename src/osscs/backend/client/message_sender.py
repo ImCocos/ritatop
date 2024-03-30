@@ -1,3 +1,4 @@
+import json
 from osscs.backend.client.common import BaseMessageSender
 from osscs.backend.core.common import BaseSender
 from osscs.backend.models.common import BaseMessage
@@ -9,4 +10,4 @@ class MessageSender(BaseMessageSender):
         self.sender = sender
     
     def send(self, message: BaseMessage, address: BaseAddress) -> None:
-        self.sender.send(address, message)
+        self.sender.send(address, json.dumps(message.dict()).encode())

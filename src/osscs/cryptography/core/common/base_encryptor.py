@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 from osscs.cryptography.core.common.base_key_loader import BaseRSAKeyLoader
 from osscs.cryptography.core.common.base_rsa_keys import BaseRSAPublicKey
-from osscs.cryptography.models.signature import Signature
 
 
 class BaseEncryptor(ABC):
@@ -17,7 +16,7 @@ class BaseEncryptor(ABC):
     def encrypt(self, string: str) -> bytes:...
     
     @abstractmethod
-    def verify_signature(self, signature: Signature) -> bool:...
-    
-    @abstractmethod
     def get_10_symbols(self) -> str:...
+
+    @abstractmethod
+    def get_bytes_public_key(self) -> bytes:...

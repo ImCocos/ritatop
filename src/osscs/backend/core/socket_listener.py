@@ -4,7 +4,6 @@ from typing import Callable
 from osscs.backend.core.common import BaseListener
 from osscs.backend.core.have_socket import HaveSocket
 from osscs.backend.core.socket_reader import SocketReader
-from osscs.backend.models.message_from_dict_mapper import MessageFromDictMapper
 from osscs.backend.storage import IPv4Address, IPv6Address
 from osscs.backend.storage.common import BaseAddress
 
@@ -28,7 +27,7 @@ class SocketListener(BaseListener, HaveSocket):
     def listen_on(
         self,
         address: TAccessedSocketAddress,
-        on_message: Callable[[MessageFromDictMapper, BaseAddress], None]
+        on_message: Callable[[bytes, BaseAddress], None]
     ) -> None:
         self._bind(address)
         socket_reader = SocketReader(self.socket)
@@ -38,15 +37,8 @@ class SocketListener(BaseListener, HaveSocket):
 
                 if not msg or not peer_address:
                     continue
-                
-                try:
-                    dct = json.loads(msg)
-                except json.decoder.JSONDecodeError:
-                    continue
-                
-                if not isinstance(dct, dict):
-                    continue
-                on_message(MessageFromDictMapper(dct), peer_address)
+
+                on_message(msg, peer_address)
 
         except KeyboardInterrupt:
             print('\nQuiting...')

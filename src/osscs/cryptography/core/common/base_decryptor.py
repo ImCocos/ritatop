@@ -18,3 +18,6 @@ class BaseDecryptor(ABC):
 
     @abstractmethod
     def public_key(self) -> BaseRSAPublicKey:...
+
+    @abstractmethod
+    def get_bytes_private_key(self) -> bytes:...

@@ -1,8 +1,5 @@
-import json
-
 from osscs.backend.core.common import BaseSender
 from osscs.backend.core.have_socket import HaveSocket
-from osscs.backend.models.common import BaseMessage
 from osscs.backend.storage.common import BaseAddress
 from osscs.backend.storage import IPv4Address, IPv6Address
 
@@ -14,16 +11,14 @@ class SocketSender(HaveSocket, BaseSender):
     def __init__(self) -> None:
         self.create_socket()
     
-    def send(self, address: BaseAddress, message: BaseMessage) -> None:
+    def send(self, address: BaseAddress, message: bytes) -> None:
         if not self.address_is_supported(address):
             raise NotImplementedError
-        self._send(address, message.dict())
+        self._send(address, message)
 
-    def _send(self, address: TAccessedSocketAddress, msg: dict[str, str | dict[str, str]]) -> None:
-        bdata = json.dumps(msg).encode()
-
+    def _send(self, address: TAccessedSocketAddress, msg: bytes) -> None:
         if isinstance(address, IPv4Address):
-            self.socket.sendto(bdata, (address.ip, address.port))
+            self.socket.sendto(msg, (address.ip, address.port))
             return
         elif isinstance(address, IPv6Address):
             raise NotImplementedError

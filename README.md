@@ -1,44 +1,49 @@
-# ritatop
+# OSSCS
+This is small messanger base.
 
-```
------BEGIN ENCRYPTED PRIVATE KEY-----
-      _ _        _              
- _ __(_) |_ __ _| |_ ___  _ __  
-| '__| | __/ _` | __/ _ \| '_ \ 
-| |  | | || (_| | || (_) | |_) |
-|_|  |_|\__\__,_|\__\___/| .__/ 
-                         |_|    
------END ENCRYPTED PRIVATE KEY-------
-```
-
-## Description
-
-This is a small project about p2p connections, sockets, crypthography.
-
-## Advantages
-
+It is:
  - open source
  - crypto secure
- - fully decentralized
- - p2p
+ - peer to peer
+ - end to end encrypted
 
-## Work
-
- - sockets
- - peer to peer connections
- - rsa keys
- - 1 to all messaging
-
-## Installing
+# Installing
 
 ```bash
 pip install osscs
-python -m osscs.configure
 ```
 
-### Running
+# Usage
 
- - Fill the ~/.config/osscs/config.json
- - add few ips to ~/.config/osscs/data/ips.txt(example: 1.1.1.1:12012)
- - `python -m osscs.backend.core.server` (to recieve messages)(in terminal №1)
- - `python -m osscs.backend.core.client` (to send messages)(in terminal №2)
+```python
+import threading
+
+from osscs.backend.client import MessageSender
+from osscs.backend.server import MessageListener
+from osscs.backend.core import SocketSender, SocketListener
+from osscs.backend.models import Message, MessageFromDictMapper
+from osscs.backend.storage import IPv4Address
+from osscs.backend.storage.common import BaseAddress
+
+
+addr = IPv4Address(
+    '127.0.0.1',
+    12012
+)
+message_sender = MessageSender(SocketSender())
+message_listener = MessageListener(SocketListener())
+
+def on_message(message: MessageFromDictMapper, address: BaseAddress) -> None:
+    print(f'{address.data()} - {message.text.decode()}')
+
+
+threading.Thread(
+    target=message_listener.listen_on,
+    args=[addr, on_message]
+).start()
+
+message_sender.send(
+    Message('Hello world'),
+    addr
+)
+```

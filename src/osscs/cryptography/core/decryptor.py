@@ -6,7 +6,7 @@ from osscs.cryptography.core.common import BaseDecryptor, BaseRSAKeyLoader, Base
 
 class Decryptor(BaseDecryptor):
     def __init__(self, key_loader: BaseRSAKeyLoader, private_key: BaseRSAPrivateKey, password: str) -> None:
-        self.key_loadet = key_loader
+        self.key_loader = key_loader
 
         self.private_key = private_key
 
@@ -29,4 +29,7 @@ class Decryptor(BaseDecryptor):
         ).decode()
     
     def public_key(self) -> BaseRSAPublicKey:
-        return self.private_key.public_key()
+        return self.private_key.public_key() # type: ignore
+
+    def get_bytes_private_key(self) -> bytes:
+        return self.key_loader.get_bytes_private_key(self.private_key, self.password)
