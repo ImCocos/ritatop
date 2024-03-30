@@ -1,26 +1,23 @@
 import uuid
 import base64
 
+from .common import BaseMessage, BaseUser
 from .mode import PrivateMode, PublicMode
-from .user import User
-from osscs.cryptography import core
+from osscs.cryptography.core.signature_fabric import SignatureFabric
 from osscs.cryptography import models
 
 
-class Message:
-    def __str__(self) -> str:
-        return f'Message(adresat={self.adresat}, mode={self.type}, signature={self.signature})'
-
-    def __init__(self, text: str, adresat: User | None = None) -> None:
+class Message(BaseMessage):
+    def __init__(self, text: str, adresat: BaseUser | None = None) -> None:
         self.text = text[:190]
         self.adresat = adresat
         self.type = PrivateMode() if self.adresat else PublicMode()
         self.signature: None | models.Signature = None
-
-    def sign(self, cryptor: core.Cryptor) -> None:
-        self.signature = cryptor.get_signature()
     
-    def dict(self) -> dict[str, str | dict[str, str]]:
+    def sign(self, signature_fabric: SignatureFabric) -> None:
+        self.signature = signature_fabric()
+    
+    def dict(self) -> dict:
         self.dict_data: dict[str, str | dict[str, str]]
         self.dict_data = {
             'uuid': base64.b64encode(str(uuid.uuid1()).encode()).decode(),
