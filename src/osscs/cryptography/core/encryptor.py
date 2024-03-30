@@ -4,8 +4,8 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import utils
 from cryptography.hazmat.primitives.asymmetric import padding
 
-from .common import BaseEncryptor, BaseRSAKeyLoader, BaseRSAPublicKey
-from osscs.cryptography import models
+from osscs.cryptography.core.common import BaseEncryptor, BaseRSAKeyLoader, BaseRSAPublicKey
+from osscs.cryptography.models import Signature
 
 
 class Encryptor(BaseEncryptor):
@@ -34,7 +34,7 @@ class Encryptor(BaseEncryptor):
             self.padding
         )
 
-    def verify_signature(self, signature: models.Signature) -> bool:
+    def verify_signature(self, signature: Signature) -> bool:
         try:
             public_key = self.key_loader.get_rsa_public_key(signature.public_key)
             if not isinstance(public_key, rsa.RSAPublicKey):

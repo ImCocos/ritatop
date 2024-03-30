@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from .base_key_loader import BaseRSAKeyLoader
-from .base_rsa_keys import BaseRSAPrivateKey, BaseRSAPublicKey
+from osscs.cryptography.core.common.base_key_loader import BaseRSAKeyLoader
+from osscs.cryptography.core.common.base_rsa_keys import BaseRSAPrivateKey, BaseRSAPublicKey
 
 
 class BaseDecryptor(ABC):

@@ -1,7 +1,7 @@
 import base64
 import hashlib
 
-from .common import BaseRSAKeyLoader, BaseKeyHasher, BaseRSAPublicKey
+from osscs.cryptography.core.common import BaseRSAKeyLoader, BaseKeyHasher, BaseRSAPublicKey
 
 
 class KeyHasherSHA1(BaseKeyHasher):

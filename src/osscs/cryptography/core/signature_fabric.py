@@ -1,9 +1,9 @@
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import utils
 
-from .decryptor import Decryptor
-from .encryptor import Encryptor
-from osscs.cryptography import models
+from osscs.cryptography.core.decryptor import Decryptor
+from osscs.cryptography.core.encryptor import Encryptor
+from osscs.cryptography.models import Signature
 
 
 class SignatureFabric:
@@ -11,7 +11,7 @@ class SignatureFabric:
         self.encryptor = encryptor
         self.decryptor = decryptor
 
-    def __call__(self) -> models.Signature:
+    def __call__(self) -> Signature:
         chosen_hash = hashes.SHA256()
         hasher = hashes.Hash(chosen_hash)
         signature_data = hasher.finalize()
@@ -22,7 +22,7 @@ class SignatureFabric:
             algorithm=utils.Prehashed(chosen_hash)
         )
 
-        return models.Signature(
+        return Signature(
             self.encryptor.key_loader.get_bytes_public_key(self.encryptor.public_key),
             signature,
             signature_data

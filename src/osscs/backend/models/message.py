@@ -1,10 +1,10 @@
 import uuid
 import base64
 
-from .common import BaseMessage, BaseUser
-from .mode import PrivateMode, PublicMode
+from osscs.backend.models.common import BaseMessage, BaseUser
+from osscs.backend.models.mode import PrivateMode, PublicMode
+from osscs.cryptography.models import Signature
 from osscs.cryptography.core.signature_fabric import SignatureFabric
-from osscs.cryptography import models
 
 
 class Message(BaseMessage):
@@ -12,7 +12,7 @@ class Message(BaseMessage):
         self.text = text[:190]
         self.adresat = adresat
         self.type = PrivateMode() if self.adresat else PublicMode()
-        self.signature: None | models.Signature = None
+        self.signature: None | Signature = None
     
     def sign(self, signature_fabric: SignatureFabric) -> None:
         self.signature = signature_fabric()

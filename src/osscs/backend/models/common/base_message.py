@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .base_user import BaseUser
+from osscs.backend.models.common import BaseUser
 from osscs.cryptography.core.signature_fabric import SignatureFabric
 
 

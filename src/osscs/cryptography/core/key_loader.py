@@ -1,6 +1,6 @@
 from cryptography.hazmat.primitives import serialization
 
-from .common import BaseRSAPrivateKey, BaseRSAKeyLoader, BaseRSAPublicKey
+from osscs.cryptography.core.common import BaseRSAPrivateKey, BaseRSAKeyLoader, BaseRSAPublicKey
 
 
 class KeyLoader(BaseRSAKeyLoader):

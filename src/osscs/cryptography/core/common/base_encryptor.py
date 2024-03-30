@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from .base_key_loader import BaseRSAKeyLoader
-from .base_rsa_keys import BaseRSAPublicKey
+from osscs.cryptography.core.common.base_key_loader import BaseRSAKeyLoader
+from osscs.cryptography.core.common.base_rsa_keys import BaseRSAPublicKey
 from osscs.cryptography.models.signature import Signature
 
 

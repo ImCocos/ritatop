@@ -1,6 +1,6 @@
-from .common import BaseRSAKeyLoader, BaseRSAPrivateKey, BaseRSAPublicKey
-from .encryptor import Encryptor
-from .decryptor import Decryptor
+from osscs.cryptography.core.common import BaseRSAKeyLoader, BaseRSAPrivateKey, BaseRSAPublicKey
+from osscs.cryptography.core.encryptor import Encryptor
+from osscs.cryptography.core.decryptor import Decryptor
 
 
 class Cryptor:

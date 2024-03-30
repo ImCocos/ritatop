@@ -1,7 +1,7 @@
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-from .common import BaseDecryptor, BaseRSAKeyLoader, BaseRSAPrivateKey, BaseRSAPublicKey
+from osscs.cryptography.core.common import BaseDecryptor, BaseRSAKeyLoader, BaseRSAPrivateKey, BaseRSAPublicKey
 
 
 class Decryptor(BaseDecryptor):

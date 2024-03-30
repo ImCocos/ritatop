@@ -1,9 +1,9 @@
-from .common import BaseUser
-from osscs.cryptography.core import common
+from osscs.backend.models.common import BaseUser
+from osscs.cryptography.core.common import BaseEncryptor
 
 
 class User(BaseUser):
-    def __init__(self, encryptor: common.BaseEncryptor) -> None:
+    def __init__(self, encryptor: BaseEncryptor) -> None:
         self.encryptor = encryptor
     
     def __str__(self) -> str:

@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-# from cryptography.hazmat.primitives.asymmetric import rsa
-
-from .base_rsa_keys import BaseRSAPrivateKey, BaseRSAPublicKey
+from osscs.cryptography.core.common.base_rsa_keys import BaseRSAPrivateKey, BaseRSAPublicKey
 
 
 class BaseRSAKeyLoader(ABC):

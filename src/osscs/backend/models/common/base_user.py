@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from osscs.cryptography.core import common
+from osscs.cryptography.core.common import BaseEncryptor
 
 
 class BaseUser(ABC):
@@ -10,7 +10,7 @@ class BaseUser(ABC):
     @abstractmethod
     def __init__(
         self,
-        encryptor: common.BaseEncryptor
+        encryptor: BaseEncryptor
     ) -> None:...
 
     @abstractmethod
