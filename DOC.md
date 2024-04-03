@@ -14,7 +14,7 @@ from osscs.backend.storage.common import BaseAddress
 # for annotations
 from osscs.backend.models import Message, MessagePreparer, User
 # To create, encode, sign messages
-from osscs.cryptography.core import Encryptor, KeyLoader, Decryptor, SignatureVerifier
+from osscs.cryptography.core import SignatureFabric, Encryptor, KeyLoader, Decryptor, SignatureVerifier
 # to encode, decode, load data; to create and verify signatures
 
 
@@ -27,9 +27,11 @@ key_loader = KeyLoader()
 decryptor = Decryptor(key_loader, key_loader.generate_private_key(), password)
 encryptor = Encryptor(key_loader, decryptor.public_key())
 
+signature_fabric = SignatureFabric(encryptor, decryptor)
 signature_verifier = SignatureVerifier(encryptor, key_loader)
 
-message_preparer = MessagePreparer(encryptor, decryptor)
+
+message_preparer = MessagePreparer(encryptor, decryptor, signature_fabric)
 message_sender = MessageSender(SocketSender())
 message_listener = MessageListener(SocketListener())
 
