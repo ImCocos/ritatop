@@ -17,22 +17,14 @@ pip install osscs
 
 ```python
 import threading
-# not required; used only for no file-splitting; better use client.py and server.py splitting
 
 from osscs.backend.client import MessageSender
-# to send messages
 from osscs.backend.server import MessageListener
-# to receive messages
 from osscs.backend.core import SocketSender, SocketListener
-# to send and read from sockets
 from osscs.backend.storage import IPv4Address
-# IPv4 address to send and receive from
-from osscs.backend.storage.common import BaseAddress
-# for annotations
 from osscs.backend.models import Message, MessagePreparer, User
-# To create, encode, sign messages
 from osscs.cryptography.core import SignatureFabric, Encryptor, KeyLoader, Decryptor, SignatureVerifier
-# to encode, decode, load data; to create and verify signatures
+from osscs.types import BaseAddress
 
 
 password = '12345'
@@ -73,3 +65,5 @@ message_sender.send(
 )
 
 ```
+
+# Documentation in [DOC.py](https://github.com/ImCocos/ritatop/blob/master/DOC.py)
