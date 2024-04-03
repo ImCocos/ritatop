@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from osscs.backend.models import Message
-from osscs.cryptography.core.common import BaseEncryptor
-from osscs.cryptography.core import SignatureFabric
+from osscs.backend.models.common import BaseUser
+from osscs.cryptography.core.common import BaseEncryptor, BaseDecryptor
 
 
 class BaseMessagePreparer(ABC):
@@ -11,7 +11,10 @@ class BaseMessagePreparer(ABC):
     Можно использовать для аннотаций.
     '''
     @abstractmethod
-    def sign(self, message: Message, signature_fabric: SignatureFabric) -> None:...
+    def __init__(self, encryptor: BaseEncryptor, decryptor: BaseDecryptor) -> None:...
 
     @abstractmethod
-    def encrypt(self, message: Message, encryptor: BaseEncryptor) -> None:...
+    def sign(self, message: Message) -> None:...
+
+    @abstractmethod
+    def encrypt(self, message: Message, adresat: BaseUser) -> None:...

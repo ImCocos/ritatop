@@ -2,7 +2,7 @@ from typing import Callable
 
 from osscs.backend.core.common import BaseListener
 from osscs.backend.core.have_socket import HaveSocket
-from osscs.backend.core import SocketReader
+from osscs.backend.core.socket_reader import SocketReader
 from osscs.backend.storage import IPv4Address, IPv6Address
 from osscs.backend.storage.common import BaseAddress
 

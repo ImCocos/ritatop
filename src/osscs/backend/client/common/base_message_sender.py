@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from osscs.backend.core.common import BaseSender
-from osscs.backend.models.common import BaseMessage
+from osscs.backend.models import Message
 from osscs.backend.storage.common import BaseAddress
 
 
@@ -20,6 +20,6 @@ class BaseMessageSender(ABC):
     @abstractmethod
     def send(
         self,
-        message: BaseMessage,
+        message: Message,
         address: BaseAddress,
     ) -> None:...
