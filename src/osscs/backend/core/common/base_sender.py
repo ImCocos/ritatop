@@ -1,16 +1,16 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 from osscs.backend.storage.common import BaseAddress
 
 
-class BaseSender(ABC):
+class BaseSender(Protocol):
     '''
     Базовый класс отправителя информации.
     Может использоваться для аннотаций.
     Может использоваться для isinstance.
     '''
-    @abstractmethod
-    def send(self, address: BaseAddress, message: bytes) -> None:...
+    def send(self, address: BaseAddress, message: bytes) -> None:
+        raise NotImplementedError
     
-    @abstractmethod
-    def address_is_supported(self, address: BaseAddress) -> bool:...
+    def address_is_supported(self, address: BaseAddress) -> bool:
+        raise NotImplementedError

@@ -16,9 +16,7 @@ class KeyStorage:
         keys = []
 
         for name in os.listdir(self.storage_path):
-            with open(os.path.join(self.storage_path, name), 'rb') as file:
-                key = self.key_loader.get_rsa_public_key(file.read())
-                keys.append(key)
+            keys.append(self.key_loader.get_rsa_public_key_from_file(os.path.join(self.storage_path, name)))
 
         return keys
     

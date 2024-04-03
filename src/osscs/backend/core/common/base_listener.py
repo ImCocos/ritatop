@@ -1,21 +1,20 @@
-from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Protocol
 
 from osscs.backend.storage.common import BaseAddress
 
 
-class BaseListener(ABC):
+class BaseListener(Protocol):
     '''
     Базовый класс слушателя информации.
     Может использоваться для аннотаций.
     Может использоваться для isinstance.
     '''
-    @abstractmethod
     def listen_on(
         self,
         address: BaseAddress,
         on_message: Callable[[bytes, BaseAddress], None]
-    ) -> None:...
+    ) -> None:
+        raise NotImplementedError
 
-    @abstractmethod
-    def address_is_supported(self, address: BaseAddress) -> bool:...
+    def address_is_supported(self, address: BaseAddress) -> bool:
+        raise NotImplementedError

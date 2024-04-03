@@ -1,20 +1,20 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 from osscs.backend.models import Message
 from osscs.backend.models.common import BaseUser
 from osscs.cryptography.core.common import BaseEncryptor, BaseDecryptor
 
 
-class BaseMessagePreparer(ABC):
+class BaseMessagePreparer(Protocol):
     '''
     Базовый класс сообщения.
     Можно использовать для аннотаций.
     '''
-    @abstractmethod
-    def __init__(self, encryptor: BaseEncryptor, decryptor: BaseDecryptor) -> None:...
+    def __init__(self, encryptor: BaseEncryptor, decryptor: BaseDecryptor) -> None:
+        raise NotImplementedError
 
-    @abstractmethod
-    def sign(self, message: Message) -> None:...
+    def sign(self, message: Message) -> None:
+        raise NotImplementedError
 
-    @abstractmethod
-    def encrypt(self, message: Message, adresat: BaseUser) -> None:...
+    def encrypt(self, message: Message, adresat: BaseUser) -> None:
+        raise NotImplementedError

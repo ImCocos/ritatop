@@ -1,13 +1,13 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 from osscs.backend.storage.common import BaseAddress
 
 
-class BaseReader(ABC):
+class BaseReader(Protocol):
     '''
     Базовый класс читателя информации.
     Может использоваться для аннотаций.
     Может использоваться для isinstance.
     '''
-    @abstractmethod
-    def poll(self) -> tuple[bytes, BaseAddress] | tuple[None, None]:...
+    def poll(self) -> tuple[bytes, BaseAddress] | tuple[None, None]:
+        raise NotImplementedError

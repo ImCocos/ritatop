@@ -1,13 +1,14 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 
-class BaseAddress(ABC):
-    @abstractmethod
-    def data(self) -> str:...
+class BaseAddress(Protocol):
+    def data(self) -> str:
+        raise NotImplementedError
 
-class BaseAdressStorage(ABC):
-    @abstractmethod
-    def load_addresses(self) -> list[BaseAddress]:...
+
+class BaseAdressStorage(Protocol):
+    def load_addresses(self) -> list[BaseAddress]:
+        raise NotImplementedError
     
-    @abstractmethod
-    def try_add_address(self, address: BaseAddress) -> None:...
+    def try_add_address(self, address: BaseAddress) -> None:
+        raise NotImplementedError

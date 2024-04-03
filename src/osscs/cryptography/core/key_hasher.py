@@ -14,4 +14,4 @@ class KeyHasherSHA1(BaseKeyHasher):
         elif isinstance(key, bytes):
             return base64.b64encode(hashlib.sha1(key).digest()).decode().replace('/', '')
         else:
-            raise NotImplementedError
+            raise TypeError(f'Key must be bytes | BaseRSAPublicKey, not "{key.__class__.__name__}"!')

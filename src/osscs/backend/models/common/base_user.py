@@ -1,17 +1,17 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 from osscs.cryptography.core.common import BaseEncryptor
 
 
-class BaseUser(ABC):
-    @abstractmethod
-    def __str__(self) -> str:...
+class BaseUser(Protocol):
+    def __str__(self) -> str:
+        raise NotImplementedError
 
-    @abstractmethod
     def __init__(
         self,
         encryptor: BaseEncryptor
-    ) -> None:...
+    ) -> None:
+        raise NotImplementedError
 
-    @abstractmethod
-    def encrypt(self, string: str) -> bytes:...
+    def encrypt(self, string: str) -> bytes:
+        raise NotImplementedError

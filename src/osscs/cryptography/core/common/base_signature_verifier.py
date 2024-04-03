@@ -1,15 +1,15 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 from osscs.cryptography.core.common.base_encryptor import BaseEncryptor
 from osscs.cryptography.models.signature import Signature
 
 
-class BaseSignatureVerifier(ABC):
-    @abstractmethod
+class BaseSignatureVerifier(Protocol):
     def __init__(
         self,
         encryptor: BaseEncryptor
-    ) -> None:...
+    ) -> None:
+        raise NotImplementedError
     
-    @abstractmethod
-    def __call__(self, signature: Signature) -> bool:...
+    def __call__(self, signature: Signature) -> bool:
+        raise NotImplementedError
