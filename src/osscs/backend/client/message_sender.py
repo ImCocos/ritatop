@@ -6,6 +6,11 @@ from osscs.backend.storage.common import BaseAddress
 
 
 class MessageSender(BaseMessageSender):
+    '''
+    Реализация базового класса отправитля сообщений.
+    На данный момент работает только с SocketSender-ами и IPv4-адресами.
+    Используется напрямую.
+    '''
     def __init__(self, sender: BaseSender) -> None:
         self.sender = sender
     

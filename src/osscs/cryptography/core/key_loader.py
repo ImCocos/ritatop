@@ -1,4 +1,5 @@
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 from osscs.cryptography.core.common import BaseRSAPrivateKey, BaseRSAKeyLoader, BaseRSAPublicKey
 
@@ -43,13 +44,13 @@ class KeyLoader(BaseRSAKeyLoader):
 
     def get_rsa_public_key(self, public_key: bytes) -> BaseRSAPublicKey:
         key = serialization.load_pem_public_key(public_key)
-        if not isinstance(key, BaseRSAPublicKey):
+        if not isinstance(key, rsa.RSAPublicKey):
             raise ValueError(f'Wrong key type: {key.__class__.__name__}')
         return key
 
     def get_rsa_private_key(self, private_key: bytes, password: str) -> BaseRSAPrivateKey:
         key = serialization.load_pem_private_key(private_key, password.encode())
-        if not isinstance(key, BaseRSAPrivateKey):
+        if not isinstance(key, rsa.RSAPrivateKey):
             raise ValueError(f'Wrong key type: {key.__class__.__name__}')
         return key
 
@@ -65,3 +66,6 @@ class KeyLoader(BaseRSAKeyLoader):
             format=serialization.PrivateFormat.PKCS8,
             encryption_algorithm=serialization.BestAvailableEncryption(password.encode())
         )
+    
+    def generate_private_key(self) -> BaseRSAPrivateKey:
+        return rsa.generate_private_key(65537, 2048)

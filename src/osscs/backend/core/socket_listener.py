@@ -1,9 +1,8 @@
-import json
 from typing import Callable
 
 from osscs.backend.core.common import BaseListener
 from osscs.backend.core.have_socket import HaveSocket
-from osscs.backend.core.socket_reader import SocketReader
+from osscs.backend.core import SocketReader
 from osscs.backend.storage import IPv4Address, IPv6Address
 from osscs.backend.storage.common import BaseAddress
 
@@ -12,6 +11,11 @@ TAccessedSocketAddress = IPv4Address | IPv6Address
 
 
 class SocketListener(BaseListener, HaveSocket):
+    '''
+    Реализация базового слушателя информации.
+    Слушает сокеты.
+    На данный момент работает только с IPv4-адресами.
+    '''
     def __init__(self) -> None:
         self.create_socket()
 

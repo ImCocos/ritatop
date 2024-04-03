@@ -6,6 +6,10 @@ from osscs.backend.storage.common import BaseAddress
 
 
 class SocketReader(BaseReader):
+    '''
+    Реализация базового читателя информации.
+    Работает с сокетами.
+    '''
     def __init__(self, socket: socket.socket) -> None:
         self.socket = socket
         

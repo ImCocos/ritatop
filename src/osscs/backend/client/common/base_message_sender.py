@@ -6,6 +6,11 @@ from osscs.backend.storage.common import BaseAddress
 
 
 class BaseMessageSender(ABC):
+    '''
+    Базовый класс отправителя сообщений.
+    Может использоваться для аннотаций.
+    Может использоваться для isinstance.
+    '''
     @abstractmethod
     def __init__(
         self,

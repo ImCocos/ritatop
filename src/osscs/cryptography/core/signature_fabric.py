@@ -28,7 +28,7 @@ class SignatureFabric(BaseSignatureFabric):
         )
 
         return Signature(
-            self.encryptor.get_bytes_public_key(),
-            signature,
-            signature_data
+            public_key=self.encryptor.get_bytes_public_key(),
+            signature=signature,
+            signature_data=signature_data
         )

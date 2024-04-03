@@ -5,6 +5,11 @@ from osscs.backend.storage.common import BaseAddress
 
 
 class BaseListener(ABC):
+    '''
+    Базовый класс слушателя информации.
+    Может использоваться для аннотаций.
+    Может использоваться для isinstance.
+    '''
     @abstractmethod
     def listen_on(
         self,

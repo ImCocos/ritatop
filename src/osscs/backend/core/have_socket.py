@@ -2,6 +2,9 @@ import socket as sock
 
 
 class HaveSocket:
+    '''
+    Класс реализующий базовую работу с сокетом в качестве поля.
+    '''
     socket: sock.socket
 
     def create_socket(self) -> None:

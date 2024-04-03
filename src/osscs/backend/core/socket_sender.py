@@ -8,6 +8,11 @@ TAccessedSocketAddress = IPv4Address | IPv6Address
 
 
 class SocketSender(HaveSocket, BaseSender):
+    '''
+    Реализация базового отправителя информации.
+    Работает с сокетами.
+    На данный момент работает только с IPv4-адресами.
+    '''
     def __init__(self) -> None:
         self.create_socket()
     
