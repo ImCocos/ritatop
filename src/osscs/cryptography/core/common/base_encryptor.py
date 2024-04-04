@@ -1,7 +1,6 @@
 from typing import Protocol
 
-from osscs.cryptography.core.common.base_key_loader import BaseRSAKeyLoader
-from osscs.cryptography.core.common.base_rsa_keys import BaseRSAPublicKey
+from osscs.cryptography.core.common import BaseRSAKeyLoader, BaseRSAPublicKey
 
 
 class BaseEncryptor(Protocol):

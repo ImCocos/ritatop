@@ -44,13 +44,13 @@ class KeyLoader(BaseRSAKeyLoader):
 
     def get_rsa_public_key(self, public_key: bytes) -> BaseRSAPublicKey:
         key = serialization.load_pem_public_key(public_key)
-        if not isinstance(key, rsa.RSAPublicKey):
+        if not isinstance(key, BaseRSAPublicKey):
             raise ValueError(f'Wrong key type: {key.__class__.__name__}')
         return key
 
     def get_rsa_private_key(self, private_key: bytes, password: str) -> BaseRSAPrivateKey:
         key = serialization.load_pem_private_key(private_key, password.encode())
-        if not isinstance(key, rsa.RSAPrivateKey):
+        if not isinstance(key, BaseRSAPrivateKey):
             raise ValueError(f'Wrong key type: {key.__class__.__name__}')
         return key
 
